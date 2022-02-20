@@ -42,9 +42,9 @@ public final class GoogleCloudStorageClient {
         /// - `GoogleCloudStorageConfigurations` `project` property (optionally configured).
         /// - `GoogleCloudCredentialsConfiguration's` `project` property (optionally configured).
         
-        guard let projectId = ProcessInfo.processInfo.environment["GOOGLE_PROJECT_ID"] ??
-                              ProcessInfo.processInfo.environment["PROJECT_ID"] ??
-                                (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
+        guard let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ?? //GOOGLE_PROJECT_ID
+								ProcessInfo.processInfo.environment["GOOGLE_PROJECT_ID"] ??                                
+								(refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
                                 storageConfig.project ?? credentials.project else {
             throw GoogleCloudStorageError.projectIdMissing
         }
