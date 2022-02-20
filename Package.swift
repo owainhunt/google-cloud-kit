@@ -24,14 +24,14 @@ let package = Package(
             name: "GoogleCloudCore",
             targets: ["Core"]
         ),
-        .library(
-            name: "GoogleCloudStorage",
-            targets: ["Storage"]
-        ),
-        .library(
-            name: "GoogleCloudDatastore",
-            targets: ["Datastore"]
-        ),
+//        .library(
+//            name: "GoogleCloudStorage",
+//            targets: ["Storage"]
+//        ),
+//        .library(
+//            name: "GoogleCloudDatastore",
+//            targets: ["Datastore"]
+//        ),
         .library(
             name: "GoogleCloudSecretManager",
             targets: ["SecretManager"]
@@ -62,20 +62,20 @@ let package = Package(
             ],
             path: "Core/Sources/"
         ),
-        .target(
-            name: "Storage",
-            dependencies: [
-                .target(name: "Core")
-            ],
-            path: "Storage/Sources/"
-        ),
-        .target(
-            name: "Datastore",
-            dependencies: [
-                .target(name: "Core")
-            ],
-            path: "Datastore/Sources/"
-        ),
+//        .target(
+//            name: "Storage",
+//            dependencies: [
+//                .target(name: "Core")
+//            ],
+//            path: "Storage/Sources/"
+//        ),
+//        .target(
+//            name: "Datastore",
+//            dependencies: [
+//                .target(name: "Core")
+//            ],
+//            path: "Datastore/Sources/"
+//        ),
         .target(
             name: "SecretManager",
             dependencies: [
@@ -112,33 +112,33 @@ let package = Package(
             ],
             path: "Core/Tests/"
         ),
-        .testTarget(
-            name: "StorageTests",
-            dependencies: [
-                .target(name: "Storage")
-            ],
-            path: "Storage/Tests/"
-        ),
-        .testTarget(
-            name: "DatastoreTests",
-            dependencies: [
-                .target(name: "Datastore")
-            ],
-            path: "Datastore/Tests/"
-        ),
-        .testTarget(
-            name: "TranslationTests",
-            dependencies: [
-                .target(name: "Translation")
-            ],
-            path: "Translation/Tests/"
-        ),
-        .testTarget(
-            name: "PubSubTests",
-            dependencies: [
-                .target(name: "PubSub")
-            ],
-            path: "PubSub/Tests/"
-        ),
+//        .testTarget(
+//            name: "StorageTests",
+//            dependencies: [
+//                .target(name: "Storage")
+//            ],
+//            path: "Storage/Tests/"
+//        ),
+//        .testTarget(
+//            name: "DatastoreTests",
+//            dependencies: [
+//                .target(name: "Datastore")
+//            ],
+//            path: "Datastore/Tests/"
+//        ),
+//        .testTarget(
+//            name: "TranslationTests",
+//            dependencies: [
+//                .target(name: "Translation")
+//            ],
+//            path: "Translation/Tests/"
+//        ),
+//        .testTarget(
+//            name: "PubSubTests",
+//            dependencies: [
+//                .target(name: "PubSub")
+//            ],
+//            path: "PubSub/Tests/"
+//        ),
     ]
 )
