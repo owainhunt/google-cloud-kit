@@ -11,7 +11,9 @@ let package = Package(
     products: [
         .library(
             name: "GoogleCloudKit",
-            targets: ["Core",  "SecretManager"] //"Storage", "Datastore", "PubSub"
+            targets: ["Core",
+                      "SecretManager",
+                      "Translation"] //"Storage", "Datastore", "PubSub"
         ),
         .library(
             name: "GoogleCloudCore",
@@ -29,10 +31,10 @@ let package = Package(
             name: "GoogleCloudSecretManager",
             targets: ["SecretManager"]
         ),
-//        .library(
-//            name: "GoogleCloudTranslation",
-//            targets: ["Translation"]
-//        ),
+        .library(
+            name: "GoogleCloudTranslation",
+            targets: ["Translation"]
+        ),
 //        .library(
 //            name: "GoogleCloudPubSub",
 //            targets: ["PubSub"]
@@ -72,13 +74,13 @@ let package = Package(
             ],
             path: "SecretManager/Sources"
         ),
-//        .target(
-//            name: "Translation",
-//            dependencies: [
-//                .target(name: "Core")
-//            ],
-//            path: "Translation/Sources"
-//        ),
+        .target(
+            name: "Translation",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "Translation/Sources"
+        ),
 //        .target(
 //            name: "PubSub",
 //            dependencies: [
@@ -108,13 +110,13 @@ let package = Package(
 //            ],
 //            path: "Datastore/Tests/"
 //        ),
-//        .testTarget(
-//            name: "TranslationTests",
-//            dependencies: [
-//                .target(name: "Translation")
-//            ],
-//            path: "Translation/Tests/"
-//        ),
+        .testTarget(
+            name: "TranslationTests",
+            dependencies: [
+                .target(name: "Translation")
+            ],
+            path: "Translation/Tests/"
+        ),
 //        .testTarget(
 //            name: "PubSubTests",
 //            dependencies: [
