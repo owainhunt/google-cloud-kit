@@ -126,13 +126,13 @@ let package = Package(
 //            ],
 //            path: "Datastore/Tests/"
 //        ),
-//        .testTarget(
-//            name: "TranslationTests",
-//            dependencies: [
-//                .target(name: "Translation")
-//            ],
-//            path: "Translation/Tests/"
-//        ),
+        .testTarget(
+            name: "TranslationTests",
+            dependencies: [
+                .target(name: "Translation")
+            ],
+            path: "Translation/Tests/"
+        ),
 //        .testTarget(
 //            name: "PubSubTests",
 //            dependencies: [
