@@ -19,10 +19,10 @@ let package = Package(
             name: "GoogleCloudCore",
             targets: ["Core"]
         ),
-//        .library(
-//            name: "GoogleCloudStorage",
-//            targets: ["Storage"]
-//        ),
+        .library(
+            name: "GoogleCloudStorage",
+            targets: ["Storage"]
+        ),
 //        .library(
 //            name: "GoogleCloudDatastore",
 //            targets: ["Datastore"]
@@ -53,13 +53,13 @@ let package = Package(
             ],
             path: "Core/Sources/"
         ),
-//        .target(
-//            name: "Storage",
-//            dependencies: [
-//                .target(name: "Core")
-//            ],
-//            path: "Storage/Sources/"
-//        ),
+        .target(
+            name: "Storage",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "Storage/Sources/"
+        ),
 //        .target(
 //            name: "Datastore",
 //            dependencies: [
