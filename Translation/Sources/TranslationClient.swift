@@ -23,7 +23,7 @@ public struct GoogleCloudTranslationClient {
             translationRequest = .init(tokenProvider: provider, client: client, project: serviceAccountCredentials.projectId)
             
         case .computeEngine(let metadataUrl):
-            let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ?? ProcessInfo.processInfo.environment["GOOGLE_PROJECT_ID"] ?? "default"
+            let projectId = Core.projectId
             switch strategy {
             case .computeEngine(let client):
                 let provider = ComputeEngineCredentialsProvider(client: client, scopes: scope, url: metadataUrl)

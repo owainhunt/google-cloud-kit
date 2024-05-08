@@ -12,6 +12,7 @@ let package = Package(
         .library(
             name: "GoogleCloudKit",
             targets: ["Core",
+                      "ServiceAccountCredentials",
                       "SecretManager",
                       "Translation",
                       "Storage"] //, "Datastore", "PubSub"
@@ -19,6 +20,10 @@ let package = Package(
         .library(
             name: "GoogleCloudCore",
             targets: ["Core"]
+        ),
+        .library(
+            name: "GoogleCloudServiceAccountCredentials",
+            targets: ["ServiceAccountCredentials"]
         ),
         .library(
             name: "GoogleCloudStorage",
@@ -53,6 +58,14 @@ let package = Package(
                 .product(name: "AsyncHTTPClient", package: "async-http-client"),
             ],
             path: "Core/Sources/"
+        ),
+        .target(
+            name: "ServiceAccountCredentials",
+            dependencies: [
+                .target(name: "Core"),
+                .product(name: "JWTKit", package: "jwt-kit"),
+            ],
+            path: "ServiceAccountCredentials/Sources/"
         ),
         .target(
             name: "Storage",
