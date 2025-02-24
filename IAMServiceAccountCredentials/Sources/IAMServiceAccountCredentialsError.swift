@@ -21,7 +21,7 @@ public enum IAMServiceAccountCredentialsError: GoogleCloudError {
     }
 }
 
-public struct IAMServiceAccountCredentialsAPIError: GoogleCloudError, GoogleCloudModel {
+public struct IAMServiceAccountCredentialsAPIError: GoogleCloudError, Codable {
     /// A container for the error information.
     public var error: IAMServiceAccountCredentialsAPIErrorBody
 }

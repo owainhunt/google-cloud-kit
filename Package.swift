@@ -13,9 +13,9 @@ let package = Package(
             name: "GoogleCloudKit",
             targets: [
                 "Core",
-                "Datastore",
+//                "Datastore",
                 "IAMServiceAccountCredentials",
-                "PubSub",
+//                "PubSub",
                 "SecretManager",
                 "Storage",
             ]
@@ -44,10 +44,10 @@ let package = Package(
             name: "GoogleCloudTranslation",
             targets: ["Translation"]
         ),
-        .library(
-            name: "GoogleCloudPubSub",
-            targets: ["PubSub"]
-        ),
+//        .library(
+//            name: "GoogleCloudPubSub",
+//            targets: ["PubSub"]
+//        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.18.0"),

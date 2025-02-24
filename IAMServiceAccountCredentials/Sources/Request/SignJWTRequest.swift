@@ -2,9 +2,12 @@ import Core
 import Foundation
 import JWTKit
 
-public struct SignJWTRequest: GoogleCloudModel {
+public struct SignJWTRequest: Codable {
     
-    public init(jwt: JWTPayload, delegates: [String] = []) throws {
+    public init(
+        jwt: JWTPayload,
+        delegates: [String] = []
+    ) throws {
         
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .integerSecondsSince1970

@@ -21,12 +21,11 @@ public struct GoogleCloudStorageClient {
 
     let cloudStorageRequest: GoogleCloudStorageRequest
     
-    /// Hop to a new eventloop to execute requests on.
-    /// - Parameter eventLoop: The eventloop to execute requests on.
-    public func hopped(to eventLoop: EventLoop) -> GoogleCloudStorageClient {
-        storageRequest.eventLoop = eventLoop
-        return self
-    public init(strategy: CredentialsLoadingStrategy, client: HTTPClient) async throws {
+    public init(
+        strategy: CredentialsLoadingStrategy,
+        client: HTTPClient,
+        scope: [GoogleCloudStorageScope]
+    ) async throws {
         let resolvedCredentials = try await CredentialsResolver.resolveCredentials(strategy: strategy)
         
         switch resolvedCredentials {
