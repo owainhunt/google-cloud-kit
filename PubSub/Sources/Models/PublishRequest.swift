@@ -8,6 +8,6 @@
 import Core
 import Foundation
 
-public struct GoogleCloudPublishRequest: GoogleCloudModel {
+public struct GoogleCloudPublishRequest: Codable {
     public let messages: [GoogleCloudPubSubMessage]
 }

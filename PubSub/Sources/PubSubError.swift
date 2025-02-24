@@ -16,7 +16,7 @@ public enum GoogleCloudPubSubError: GoogleCloudError {
 }
 
 /// [Reference](https://cloud.google.com/storage/docs/json_api/v1/status-codes)
-public struct PubSubAPIError: GoogleCloudError, GoogleCloudModel {
+public struct PubSubAPIError: GoogleCloudError, Codable {
     /// A container for the error information.
     public var error: PubSubAPIErrorBody
 }

@@ -8,6 +8,6 @@
 import Core
 import Foundation
 
-public struct AcknowledgeRequest: GoogleCloudModel {
+public struct AcknowledgeRequest: Codable {
     public var ackIds: [String]
 }

@@ -8,7 +8,7 @@
 import Core
 import Foundation
 
-public struct GoogleCloudPubSubMessage: GoogleCloudModel {
+public struct GoogleCloudPubSubMessage: Codable {
     public var data: String?
     public var attributes: [String: String]?
     public var messageId: String?

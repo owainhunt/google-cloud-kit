@@ -8,34 +8,37 @@ public final class GoogleCloudPubSubClient {
     public var pubSubSubscription: SubscriptionsAPI
     var pubSubRequest: GoogleCloudPubSubRequest
     
-    public init(credentials: GoogleCloudCredentialsConfiguration,
-                config: GoogleCloudPubSubConfiguration,
-                httpClient: HTTPClient,
-                eventLoop: EventLoop,
-                base: String = "https://pubsub.googleapis.com") throws {
-        let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials,
-                                                                         withConfig: config,
-                                                                         andClient: httpClient,
-                                                                         eventLoop: eventLoop)
-        guard let projectId = ProcessInfo.processInfo.environment["GOOGLE_PROJECT_ID"] ??
-                              ProcessInfo.processInfo.environment["PROJECT_ID"] ??
-                              (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
-                              config.project ?? credentials.project else {
-            throw GoogleCloudPubSubError.projectIdMissing
+    public init(
+        strategy: CredentialsLoadingStrategy,
+        client: HTTPClient,
+        base: String = "https://pubsub.googleapis.com",
+        scope: [GoogleCloudPubSubScope]
+    ) async throws {
+        
+        let resolvedCredentials = try await CredentialsResolver.resolveCredentials(strategy: strategy)
+        
+        switch resolvedCredentials {
+            case .gcloud(let gCloudCredentials):
+                let provider = GCloudCredentialsProvider(client: client, credentials: gCloudCredentials)
+                pubSubRequest = .init(tokenProvider: provider, client: client, project: gCloudCredentials.quotaProjectId)
+                
+            case .serviceAccount(let serviceAccountCredentials):
+                let provider = ServiceAccountCredentialsProvider(client: client, credentials: serviceAccountCredentials, scope: scope)
+                pubSubRequest = .init(tokenProvider: provider, client: client, project: serviceAccountCredentials.projectId)
+                
+            case .computeEngine(let metadataUrl):
+                let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ?? "default"
+                switch strategy {
+                    case .computeEngine(let client):
+                        let provider = ComputeEngineCredentialsProvider(client: client, scopes: scope, url: metadataUrl)
+                        pubSubRequest = .init(tokenProvider: provider, client: client, project: projectId)
+                    default:
+                        let provider = ComputeEngineCredentialsProvider(client: client, scopes: scope, url: metadataUrl)
+                        pubSubRequest = .init(tokenProvider: provider, client: client, project: projectId)
+                }
         }
         
-        pubSubRequest = GoogleCloudPubSubRequest(httpClient: httpClient,
-                                                 eventLoop: eventLoop,
-                                                 oauth: refreshableToken,
-                                                 project: projectId)
         pubSubTopic = GoogleCloudPubSubTopicsAPI(request: pubSubRequest, endpoint: base)
         pubSubSubscription = GoogleCloudPubSubSubscriptionsAPI(request: pubSubRequest, endpoint: base)
-    }
-    
-    /// Hop to a new eventloop to execute requests on.
-    /// - Parameter eventLoop: The eventloop to execute requests on.
-    public func hopped(to eventLoop: EventLoop) -> GoogleCloudPubSubClient {
-        pubSubRequest.eventLoop = eventLoop
-        return self
     }
 }

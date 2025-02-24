@@ -15,9 +15,10 @@ let package = Package(
                 "Core",
 //                "Datastore",
                 "IAMServiceAccountCredentials",
-//                "PubSub",
+                "PubSub",
                 "SecretManager",
                 "Storage",
+                "Translation"
             ]
         ),
         .library(
@@ -25,29 +26,29 @@ let package = Package(
             targets: ["Core"]
         ),
         .library(
-            name: "GoogleCloudStorage",
-            targets: ["Storage"]
+            name: "GoogleCloudIAMServiceAccountCredentials",
+            targets: ["IAMServiceAccountCredentials"]
         ),
 //        .library(
 //            name: "GoogleCloudDatastore",
 //            targets: ["Datastore"]
 //        ),
         .library(
+            name: "GoogleCloudPubSub",
+            targets: ["PubSub"]
+        ),
+        .library(
             name: "GoogleCloudSecretManager",
             targets: ["SecretManager"]
         ),
         .library(
-            name: "GoogleCloudIAMServiceAccountCredentials",
-            targets: ["IAMServiceAccountCredentials"]
+            name: "GoogleCloudStorage",
+            targets: ["Storage"]
         ),
         .library(
             name: "GoogleCloudTranslation",
             targets: ["Translation"]
         ),
-//        .library(
-//            name: "GoogleCloudPubSub",
-//            targets: ["PubSub"]
-//        ),
     ],
     dependencies: [
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.18.0"),
@@ -112,13 +113,13 @@ let package = Package(
             ],
             path: "Core/Tests/"
         ),
-//        .testTarget(
-//            name: "StorageTests",
-//            dependencies: [
-//                .target(name: "Storage")
-//            ],
-//            path: "Storage/Tests/"
-//        ),
+        .testTarget(
+            name: "StorageTests",
+            dependencies: [
+                .target(name: "Storage")
+            ],
+            path: "Storage/Tests/"
+        ),
 //        .testTarget(
 //            name: "DatastoreTests",
 //            dependencies: [
@@ -133,12 +134,12 @@ let package = Package(
             ],
             path: "Translation/Tests/"
         ),
-//        .testTarget(
-//            name: "PubSubTests",
-//            dependencies: [
-//                .target(name: "PubSub")
-//            ],
-//            path: "PubSub/Tests/"
-//        ),
+        .testTarget(
+            name: "PubSubTests",
+            dependencies: [
+                .target(name: "PubSub")
+            ],
+            path: "PubSub/Tests/"
+        ),
     ]
 )

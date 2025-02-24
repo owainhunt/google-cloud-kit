@@ -9,7 +9,10 @@ public protocol TopicsAPI {
     /// - parameter `topicId`: Name of the topic
     ///             `topicProject`: Name of the project that owns the topic. If not provided, the default project will be used.
     /// - returns: If successful, the response body contains an instance of `Topic`.
-    func get(topicId: String, topicProject: String?) -> EventLoopFuture<GoogleCloudPubSubTopic>
+    func get(
+        topicId: String,
+        topicProject: String?
+    ) async throws -> GoogleCloudPubSubTopic
     
     /// Lists matching topics.
     ///
@@ -18,7 +21,11 @@ public protocol TopicsAPI {
     ///             continuation of a prior topics.list call, and that the system should return the next page of data
     ///             `topicProject`: Name of the project that owns the topic. If not provided, the default project will be used.
     /// - returns: Returns a list of topics and the `nextPageToken`
-    func list(pageSize: Int?, pageToken: String?, topicProject: String?) -> EventLoopFuture<GooglePubSubListTopicResponse>
+    func list(
+        pageSize: Int?,
+        pageToken: String?,
+        topicProject: String?
+    ) async throws -> GooglePubSubListTopicResponse
     
     /// Adds one or more messages to the topic.
     ///
@@ -28,63 +35,103 @@ public protocol TopicsAPI {
     ///             `attributes`: Attributes for this message
     ///             `orderingKey`: Identifies related messages for which publish order should be respected
     /// - returns: Returns an array of `messageId`. `MessageId` is the server-assigned ID of each published message, in the same order as the messages in the request. IDs are guaranteed to be unique within the topic.
-    func publish(topicId: String, topicProject: String?, data: String, attributes: [String: String]?, orderingKey: String?) -> EventLoopFuture<GoogleCloudPublishResponse>
+    func publish(
+        topicId: String,
+        topicProject: String?,
+        data: String,
+        attributes: [String: String]?,
+        orderingKey: String?
+    ) async throws -> GoogleCloudPublishResponse
     
     /// Lists the names of the attached subscriptions on this topic.
-    func getSubscriptionsList(topicId: String, topicProject: String?, pageSize: Int?, pageToken: String?) -> EventLoopFuture<GooglePubSubTopicSubscriptionListResponse>
+    func getSubscriptionsList(
+        topicId: String,
+        topicProject: String?,
+        pageSize: Int?,
+        pageToken: String?
+    ) async throws -> GooglePubSubTopicSubscriptionListResponse
 }
 
 public final class GoogleCloudPubSubTopicsAPI: TopicsAPI {
+    
     let endpoint: String
     let request: GoogleCloudPubSubRequest
     let encoder = JSONEncoder()
     
-    init(request: GoogleCloudPubSubRequest,
-         endpoint: String) {
+    init(
+        request: GoogleCloudPubSubRequest,
+        endpoint: String
+    ) {
         self.request = request
         self.endpoint = endpoint
     }
     
-    public func get(topicId: String, topicProject: String? = nil) -> EventLoopFuture<GoogleCloudPubSubTopic> {
-        return request.send(method: .GET, path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/\(topicId)")
+    public func get(
+        topicId: String,
+        topicProject: String? = nil
+    ) async throws -> GoogleCloudPubSubTopic {
+        return try await request.send(
+            method: .GET,
+            path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/\(topicId)"
+        )
     }
     
-    public func list(pageSize: Int?, pageToken: String?, topicProject: String? = nil) -> EventLoopFuture<GooglePubSubListTopicResponse> {
+    public func list(
+        pageSize: Int?,
+        pageToken: String?,
+        topicProject: String? = nil
+    ) async throws -> GooglePubSubListTopicResponse {
         var query = "pageSize=\(pageSize ?? 10)"
         if let pageToken = pageToken {
             query.append(contentsOf: "&pageToken=\(pageToken)")
         }
         
-        return request.send(method: .GET,
-                            path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics",
-                            query: query)
+        return try await request.send(
+            method: .GET,
+            path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics",
+            query: query
+        )
     }
     
-    public func publish(topicId: String, topicProject: String? = nil, data: String, attributes: [String: String]?, orderingKey: String?) -> EventLoopFuture<GoogleCloudPublishResponse> {
-        do {
+    public func publish(
+        topicId: String,
+        topicProject: String? = nil,
+        data: String,
+        attributes: [String: String]?,
+        orderingKey: String?
+    ) async throws -> GoogleCloudPublishResponse {
             let message = GoogleCloudPubSubMessage(data: data, attributes: attributes, orderingKey: orderingKey)
             let publishRequest = GoogleCloudPublishRequest(messages: [message])
-            let body = try HTTPClient.Body.data(encoder.encode(publishRequest))
+            let requestBody = try HTTPClientRequest.Body.bytes(
+                .init(data: encoder.encode(publishRequest))
+            )
+            
             let path = "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/\(topicId):publish"
             
             print("<<<--- Publish on: \(path) --->")
             
-            return request.send(method: .POST,
-                                path: path,
-                                body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+            return try await request.send(
+                method: .POST,
+                path: path,
+                body: requestBody
+            )
     }
     
-    public func getSubscriptionsList(topicId: String, topicProject: String? = nil, pageSize: Int?, pageToken: String?) -> EventLoopFuture<GooglePubSubTopicSubscriptionListResponse> {
+    public func getSubscriptionsList(
+        topicId: String,
+        topicProject: String? = nil,
+        pageSize: Int?,
+        pageToken: String?
+    ) async throws -> GooglePubSubTopicSubscriptionListResponse {
         var query = "pageSize=\(pageSize ?? 10)"
         if let pageToken = pageToken {
             query.append(contentsOf: "&pageToken=\(pageToken)")
         }
         
-        return request.send(method: .GET,
-                            path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/subscriptions",
-                            query: query)
+        return try await request.send(
+            method: .GET,
+            path: "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/subscriptions",
+            query: query
+        )
     }
 }

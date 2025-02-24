@@ -8,7 +8,7 @@
 import Core
 import Foundation
 
-public struct GooglePubSubTopicSubscriptionListResponse: GoogleCloudModel {
+public struct GooglePubSubTopicSubscriptionListResponse: Codable {
     /// The names of subscriptions attached to the topic specified in the request.
     public let subscriptions: [String]
     

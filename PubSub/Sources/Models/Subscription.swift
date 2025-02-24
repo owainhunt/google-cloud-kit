@@ -8,7 +8,7 @@
 import Core
 import Foundation
 
-public struct GoogleCloudPubSubSubscription: GoogleCloudModel {
+public struct GoogleCloudPubSubSubscription: Codable {
     public var name: String
     public var topic: String
     public var pushConfig: PushConfig?
@@ -24,29 +24,29 @@ public struct GoogleCloudPubSubSubscription: GoogleCloudModel {
     public var detached: Bool?
 }
 
-public struct PushConfig: GoogleCloudModel {
+public struct PushConfig: Codable {
     public var pushEndpoint: String?
     public var attributes: [String: String]?
     public var oidcToken: OidcToken?
 }
 
-public struct ExpirationPolicy: GoogleCloudModel {
+public struct ExpirationPolicy: Codable {
     public var ttl: String?
 }
 
-public struct DeadLetterPolicy: GoogleCloudModel {
+public struct DeadLetterPolicy: Codable {
     public var deadLetterTopic: String
     public var maxDeliveryAttempts: Int?
 }
 
-public struct RetryPolicy: GoogleCloudModel {
+public struct RetryPolicy: Codable {
     public var minimumBackoff: String?
     public var maximumBackoff: String?
 }
 
-public struct OidcToken: GoogleCloudModel {
+public struct OidcToken: Codable {
     public var serviceAccountEmail: String?
     public var audience: String?
 }
 
-public struct EmptyResponse: GoogleCloudModel {}
+public struct EmptyResponse: Codable {}

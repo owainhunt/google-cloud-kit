@@ -16,14 +16,21 @@ public protocol SubscriptionsAPI {
     /// - parameter `subscriptionId`: The name of the subscription to get
     ///             `subscriptionProject`: Name of the project that owns the subscription. If not provided, the default project will be used.
     /// - returns: An instance of the `Subscription`
-    func get(subscriptionId: String, subscriptionProject: String?) -> EventLoopFuture<GoogleCloudPubSubSubscription>
+    func get(
+        subscriptionId: String,
+        subscriptionProject: String?
+    ) async throws -> GoogleCloudPubSubSubscription
     
     /// Acknowledges the messages associated with the ackIds in the AcknowledgeRequest.
     ///
     /// - parameters `subscriptionId`: ID of the subscription whose message is being acknowledged
     ///              `subscriptionProject`: Name of the project that owns the subscription. If not provided, the default project will be used.
     ///              `ackIds`: The acknowledgment ID for the messages being acknowledged that was returned by the Pub/Sub system in the subscriptions.pull response. Must not be empty.
-    func acknowledge(subscriptionId: String, subscriptionProject: String?, ackIds: [String]) -> EventLoopFuture<EmptyResponse>
+    func acknowledge(
+        subscriptionId: String,
+        subscriptionProject: String?,
+        ackIds: [String]
+    ) async throws -> EmptyResponse
     
     /// Creates a subscription to a given topic.
     /// - parameter `subscriptionId`: The name of the subscription to be created.
@@ -49,123 +56,153 @@ public protocol SubscriptionsAPI {
     ///
     /// - returns: If successful, the response body contains a newly created instance of Subscription.
     ///            If the subscription already exists, returns ALREADY_EXISTS. If the corresponding topic doesn't exist, returns NOT_FOUND.
-    func create(subscriptionId: String,
-                subscriptionProject: String?,
-                topicId: String,
-                topicProject: String?,
-                pushEndpoint: String?,
-                pushConfigAttributes: [String: String]?,
-                pushConfigOidcTokenServiceAccountEmail: String?,
-                pushConfigOidcTokenAudience: String?,
-                ackDeadlineSeconds: Int?,
-                retainAckedMessages: Bool?,
-                messageRetentionDuration: String?,
-                labels: [String: String]?,
-                enableMessageOrdering: Bool?,
-                expirationPolicyTTL: String?,
-                filter: String?,
-                deadLetterPolicyTopic: String?,
-                deadLetterPolicyMaxDeliveryAttempts: Int?,
-                retryPolicyMinimumBackoff: String?,
-                retryPolicyMaximumBackoff: String?,
-                detached: Bool?) -> EventLoopFuture<GoogleCloudPubSubSubscription>
+    func create(
+        subscriptionId: String,
+        subscriptionProject: String?,
+        topicId: String,
+        topicProject: String?,
+        pushEndpoint: String?,
+        pushConfigAttributes: [String: String]?,
+        pushConfigOidcTokenServiceAccountEmail: String?,
+        pushConfigOidcTokenAudience: String?,
+        ackDeadlineSeconds: Int?,
+        retainAckedMessages: Bool?,
+        messageRetentionDuration: String?,
+        labels: [String: String]?,
+        enableMessageOrdering: Bool?,
+        expirationPolicyTTL: String?,
+        filter: String?,
+        deadLetterPolicyTopic: String?,
+        deadLetterPolicyMaxDeliveryAttempts: Int?,
+        retryPolicyMinimumBackoff: String?,
+        retryPolicyMaximumBackoff: String?,
+        detached: Bool?
+    ) async throws -> GoogleCloudPubSubSubscription
 }
 
 public final class GoogleCloudPubSubSubscriptionsAPI: SubscriptionsAPI {
+    
     let endpoint: String
     let request: GoogleCloudPubSubRequest
     let encoder = JSONEncoder()
     
-    init(request: GoogleCloudPubSubRequest, endpoint: String) {
+    init(
+        request: GoogleCloudPubSubRequest,
+        endpoint: String
+    ) {
         self.request = request
         self.endpoint = endpoint
     }
     
-    public func get(subscriptionId: String, subscriptionProject: String? = nil) -> EventLoopFuture<GoogleCloudPubSubSubscription> {
-        return request.send(method: .GET, path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId)")
+    public func get(
+        subscriptionId: String,
+        subscriptionProject: String? = nil
+    ) async throws -> GoogleCloudPubSubSubscription {
+        return try await request.send(
+            method: .GET,
+            path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId)"
+        )
     }
     
-    public func acknowledge(subscriptionId: String, subscriptionProject: String? = nil, ackIds: [String]) -> EventLoopFuture<EmptyResponse> {
-        do {
-            let acks = AcknowledgeRequest(ackIds: ackIds)
-            let body = try HTTPClient.Body.data(encoder.encode(acks))
-            return request.send(method: .POST,
-                                path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId):acknowledge",
-                                body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+    public func acknowledge(
+        subscriptionId: String,
+        subscriptionProject: String? = nil,
+        ackIds: [String]
+    ) async throws -> EmptyResponse {
+        let acks = AcknowledgeRequest(ackIds: ackIds)
+        let body = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(ackIds))
+        )
+
+        return try await request.send(
+            method: .POST,
+            path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId):acknowledge",
+            body: body
+        )
+        
     }
     
-    public func create(subscriptionId: String,
-                       subscriptionProject: String? = nil,
-                       topicId: String,
-                       topicProject: String? = nil,
-                       pushEndpoint: String?,
-                       pushConfigAttributes: [String: String]?,
-                       pushConfigOidcTokenServiceAccountEmail: String?,
-                       pushConfigOidcTokenAudience: String?,
-                       ackDeadlineSeconds: Int?,
-                       retainAckedMessages: Bool?,
-                       messageRetentionDuration: String?,
-                       labels: [String: String]?,
-                       enableMessageOrdering: Bool?,
-                       expirationPolicyTTL: String?,
-                       filter: String?,
-                       deadLetterPolicyTopic: String?,
-                       deadLetterPolicyMaxDeliveryAttempts: Int?,
-                       retryPolicyMinimumBackoff: String?,
-                       retryPolicyMaximumBackoff: String?,
-                       detached: Bool?) -> EventLoopFuture<GoogleCloudPubSubSubscription> {
-        do {
-            var pushConfig: PushConfig? = nil
-            if let pushEndpoint = pushEndpoint {
-                var oidcToken: OidcToken? = nil
-                if let serviceAccountEmail = pushConfigOidcTokenServiceAccountEmail, let audience = pushConfigOidcTokenAudience {
-                    oidcToken = OidcToken(serviceAccountEmail: serviceAccountEmail, audience: audience)
-                }
-                
-                pushConfig = PushConfig(pushEndpoint: pushEndpoint,
-                                            attributes: pushConfigAttributes,
-                                            oidcToken: oidcToken)
+    public func create(
+        subscriptionId: String,
+        subscriptionProject: String? = nil,
+        topicId: String,
+        topicProject: String? = nil,
+        pushEndpoint: String?,
+        pushConfigAttributes: [String: String]?,
+        pushConfigOidcTokenServiceAccountEmail: String?,
+        pushConfigOidcTokenAudience: String?,
+        ackDeadlineSeconds: Int?,
+        retainAckedMessages: Bool?,
+        messageRetentionDuration: String?,
+        labels: [String: String]?,
+        enableMessageOrdering: Bool?,
+        expirationPolicyTTL: String?,
+        filter: String?,
+        deadLetterPolicyTopic: String?,
+        deadLetterPolicyMaxDeliveryAttempts: Int?,
+        retryPolicyMinimumBackoff: String?,
+        retryPolicyMaximumBackoff: String?,
+        detached: Bool?
+    ) async throws -> GoogleCloudPubSubSubscription {
+        
+        var pushConfig: PushConfig? = nil
+        
+        if let pushEndpoint = pushEndpoint {
+            var oidcToken: OidcToken? = nil
+            if let serviceAccountEmail = pushConfigOidcTokenServiceAccountEmail,
+                let audience = pushConfigOidcTokenAudience {
+                oidcToken = OidcToken(serviceAccountEmail: serviceAccountEmail, audience: audience)
             }
             
-            var expirationPolicy: ExpirationPolicy? = nil
-            if let ttl = expirationPolicyTTL {
-                expirationPolicy = ExpirationPolicy(ttl: ttl)
-            }
-            
-            var deadLetterPolicy: DeadLetterPolicy? = nil
-            if let deadLetterPolicyTopic = deadLetterPolicyTopic {
-                deadLetterPolicy = DeadLetterPolicy(deadLetterTopic: deadLetterPolicyTopic,
-                                                        maxDeliveryAttempts: deadLetterPolicyMaxDeliveryAttempts)
-            }
-            
-            var retryPolicy: RetryPolicy? = nil
-            if let min = retryPolicyMinimumBackoff, let max = retryPolicyMaximumBackoff {
-                retryPolicy = RetryPolicy(minimumBackoff: min,
-                                          maximumBackoff: max)
-            }
-            
-            let subscription = GoogleCloudPubSubSubscription(name: subscriptionId,
-                                                             topic: "projects/\(topicProject ?? request.project)/topics/\(topicId)",
-                                                             pushConfig: pushConfig,
-                                                             ackDeadlineSeconds: ackDeadlineSeconds,
-                                                             retainAckedMessages: retainAckedMessages,
-                                                             messageRetentionDuration: messageRetentionDuration,
-                                                             labels: labels,
-                                                             enableMessageOrdering: enableMessageOrdering,
-                                                             expirationPolicy: expirationPolicy,
-                                                             filter: filter,
-                                                             deadLetterPolicy: deadLetterPolicy,
-                                                             retryPolicy: retryPolicy,
-                                                             detached: detached)
-            let body = try HTTPClient.Body.data(encoder.encode(subscription))
-            return request.send(method: .PUT,
-                                path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId)",
-                                body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
+            pushConfig = PushConfig(
+                pushEndpoint: pushEndpoint,
+                attributes: pushConfigAttributes,
+                oidcToken: oidcToken
+            )
         }
+        
+        var expirationPolicy: ExpirationPolicy? = nil
+        if let ttl = expirationPolicyTTL {
+            expirationPolicy = ExpirationPolicy(ttl: ttl)
+        }
+        
+        var deadLetterPolicy: DeadLetterPolicy? = nil
+        if let deadLetterPolicyTopic = deadLetterPolicyTopic {
+            deadLetterPolicy = DeadLetterPolicy(deadLetterTopic: deadLetterPolicyTopic,
+                                                maxDeliveryAttempts: deadLetterPolicyMaxDeliveryAttempts)
+        }
+        
+        var retryPolicy: RetryPolicy? = nil
+        if let min = retryPolicyMinimumBackoff, let max = retryPolicyMaximumBackoff {
+            retryPolicy = RetryPolicy(minimumBackoff: min,
+                                      maximumBackoff: max)
+        }
+        
+        let subscription = GoogleCloudPubSubSubscription(
+            name: subscriptionId,
+            topic: "projects/\(topicProject ?? request.project)/topics/\(topicId)",
+            pushConfig: pushConfig,
+            ackDeadlineSeconds: ackDeadlineSeconds,
+            retainAckedMessages: retainAckedMessages,
+            messageRetentionDuration: messageRetentionDuration,
+            labels: labels,
+            enableMessageOrdering: enableMessageOrdering,
+            expirationPolicy: expirationPolicy,
+            filter: filter,
+            deadLetterPolicy: deadLetterPolicy,
+            retryPolicy: retryPolicy,
+            detached: detached
+        )
+        
+        let body = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(subscription))
+        )
+        
+        return try await request.send(
+            method: .PUT,
+            path: "\(endpoint)/v1/projects/\(subscriptionProject ?? request.project)/subscriptions/\(subscriptionId)",
+            body: body
+        )
+
     }
 }

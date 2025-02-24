@@ -8,6 +8,6 @@
 import Core
 import Foundation
 
-public struct GoogleCloudPublishResponse: GoogleCloudModel {
+public struct GoogleCloudPublishResponse: Codable {
     public let messageIds: [String]
 }

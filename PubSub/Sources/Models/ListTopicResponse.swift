@@ -8,7 +8,7 @@
 import Core
 import Foundation
 
-public struct GooglePubSubListTopicResponse: GoogleCloudModel {
+public struct GooglePubSubListTopicResponse: Codable {
     /// The resulting topics.
     public var topics: [GoogleCloudPubSubTopic]
     

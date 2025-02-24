@@ -45,7 +45,7 @@ class IAMServiceAccountCredentialsRequest: GoogleCloudAPIClient {
         request.body = body
         
         let response = try await httpClient.execute(request, timeout: .seconds(60))
-        let responseData = try await response.body.collect(upTo: 1024 * 1024 * 100) // 500mb to account for data downloads.
+        let responseData = try await response.body.collect(upTo: 1024 * 1024 * 50) // 50mb
         
         guard (200...299).contains(response.status.code) else {
             do {

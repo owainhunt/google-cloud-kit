@@ -8,7 +8,7 @@
 import Core
 import Foundation
 
-public struct GoogleCloudPubSubTopic: GoogleCloudModel {
+public struct GoogleCloudPubSubTopic: Codable {
     /// Reserved for future use. This field is set only in responses from the server; it is ignored if it is set in any requests.
     public var name: String
     
@@ -28,12 +28,12 @@ public struct GoogleCloudPubSubTopic: GoogleCloudModel {
     public var satisfiesPzs: Bool?
 }
 
-public struct MessageStoragePolicy: GoogleCloudModel {
+public struct MessageStoragePolicy: Codable {
     /// A policy constraining the storage of messages published to the topic.
     public var allowedPersistenceRegions: [String]
 }
 
-public struct SchemaSettings: GoogleCloudModel {
+public struct SchemaSettings: Codable {
     /// Required. The name of the schema that messages published should be validated against. Format is `projects/{project}/schemas/{schema}`. The value of this field will be `_deleted-schema_` if the schema has been deleted.
     public var schema: String
     
@@ -41,7 +41,7 @@ public struct SchemaSettings: GoogleCloudModel {
     public var encoding: GoogleCloudPubSubEncoding
 }
 
-public enum GoogleCloudPubSubEncoding: String, GoogleCloudModel {
+public enum GoogleCloudPubSubEncoding: String, Codable {
     /// Unspecified
     case unspecified = "ENCODING_UNSPECIFIED"
     
