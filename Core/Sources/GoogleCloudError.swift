@@ -14,19 +14,22 @@ public enum CredentialLoadError: GoogleCloudError {
     case fileLoadError(String)
     case computeEngineCheckNotAvailable
     case computeEngineNotAvailable
+    case automaticCredentialInitializationFailed
     
     var localizedDescription: String {
-        switch self {
+        return switch self {
         case .jsonLoadError:
-            return "Failed to load the JSON from the GOOGLE_APPLICATION_CREDENTIALS env variable."
+            "Failed to load the JSON from the GOOGLE_APPLICATION_CREDENTIALS env variable."
             
         case .fileLoadError(let path):
-            return "Failed to load GoogleCloud credentials from the file path \(path)"
+            "Failed to load GoogleCloud credentials from the file path \(path)"
             
         case .computeEngineCheckNotAvailable:
-            return "Failed to load credentials. This is because the environment variable 'NO_GCE_CHECK' is set to 'true' which prevents the SDK from verifying if you're running on Compute Engine. Set 'NO_GCE_CHECK' to 'false' to avoid this."
+            "Failed to load credentials. This is because the environment variable 'NO_GCE_CHECK' is set to 'true' which prevents the SDK from verifying if you're running on Compute Engine. Set 'NO_GCE_CHECK' to 'false' to avoid this."
         case .computeEngineNotAvailable:
-            return  "ComputeEngineCredentialsProvider cannot find the metadata server. This is likely because code is not running on Google Compute Engine."
+            "ComputeEngineCredentialsProvider cannot find the metadata server. This is likely because code is not running on Google Compute Engine."
+            case .automaticCredentialInitializationFailed:
+                "Attempt to automatically detect credentials - first from a file, then from the environment, then using GCE metadata server - failed."
         }
     }
 }

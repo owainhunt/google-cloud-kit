@@ -32,7 +32,7 @@ public extension GoogleCloudAPIClient {
         scope: [GoogleCloudAPIScope]
     ) async throws -> T {
         
-        let resolvedCredentials = try await CredentialsResolver.resolveCredentials(strategy: strategy)
+        let resolvedCredentials = try await CredentialsResolver.resolveCredentials(strategy: strategy, client: client)
         let provider: AccessTokenProvider
         let projectId: String
         

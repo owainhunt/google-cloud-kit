@@ -20,4 +20,6 @@ public enum CredentialsLoadingStrategy {
     case computeEngine(client: HTTPClient)
     /// Loads the credentials as JSON from environment variables as opposed to a file path on disk.
     case environmentJSON
+    /// Attempt to automatically detect credentials. Uses `environment`, then `environmentJSON`, then `computeEngine`
+    case autodetect
 }
