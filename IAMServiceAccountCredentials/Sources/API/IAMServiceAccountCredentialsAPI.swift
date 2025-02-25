@@ -49,9 +49,7 @@ public final class GoogleCloudServiceAccountCredentialsAPI: IAMServiceAccountCre
             jwt: jwt,
             delegates: delegates
         )
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(signJWTRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(signJWTRequest, encoder: encoder)
             
         return try await request.send(
             method: .POST,

@@ -100,21 +100,19 @@ public final class GoogleCloudPubSubTopicsAPI: TopicsAPI {
         attributes: [String: String]?,
         orderingKey: String?
     ) async throws -> GoogleCloudPublishResponse {
-            let message = GoogleCloudPubSubMessage(data: data, attributes: attributes, orderingKey: orderingKey)
-            let publishRequest = GoogleCloudPublishRequest(messages: [message])
-            let requestBody = try HTTPClientRequest.Body.bytes(
-                .init(data: encoder.encode(publishRequest))
-            )
-            
-            let path = "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/\(topicId):publish"
-            
-            print("<<<--- Publish on: \(path) --->")
-            
-            return try await request.send(
-                method: .POST,
-                path: path,
-                body: requestBody
-            )
+        let message = GoogleCloudPubSubMessage(data: data, attributes: attributes, orderingKey: orderingKey)
+        let publishRequest = GoogleCloudPublishRequest(messages: [message])
+        let requestBody = try HTTPClientRequest.Body(publishRequest, encoder: encoder)
+        
+        let path = "\(endpoint)/v1/projects/\(topicProject ?? request.project)/topics/\(topicId):publish"
+        
+        print("<<<--- Publish on: \(path) --->")
+        
+        return try await request.send(
+            method: .POST,
+            path: path,
+            body: requestBody
+        )
     }
     
     public func getSubscriptionsList(

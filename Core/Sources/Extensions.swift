@@ -5,6 +5,7 @@
 //  Created by Andrew Edwards on 4/21/18.
 //
 
+import AsyncHTTPClient
 import Foundation
 
 extension Dictionary {
@@ -41,5 +42,14 @@ extension Dictionary {
         }
         
         return components
+    }
+}
+
+
+public extension HTTPClientRequest.Body {
+    init(_ value: Codable, encoder: JSONEncoder) throws {
+        self = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(value))
+        )
     }
 }

@@ -396,9 +396,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             keys: keys,
             databaseId: databaseId
         )
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(allocateIdsRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(allocateIdsRequest, encoder: encoder)
         
         return try await request.send(method: .POST, path: "\(projectPath):allocateIds", body: requestBody)
     }
@@ -413,9 +411,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             keys: keys
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(reserveIdsRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(reserveIdsRequest, encoder: encoder)
         return try await request.send(method: .POST, path: "\(projectPath):reserveIds", body: requestBody)
         
     }
@@ -430,9 +426,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(transactionRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(transactionRequest, encoder: encoder)
         
         return try await request.send(method: .POST, path: "\(projectPath):beginTransaction", body: requestBody)
     }
@@ -449,9 +443,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(commitRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(commitRequest, encoder: encoder)
         return try await request.send(method: .POST, path: "\(projectPath):commit", body: requestBody)
         
     }
@@ -466,9 +458,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(lookupRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(lookupRequest, encoder: encoder)
         
         return try await request.send(method: .POST, path: "\(projectPath):lookup", body: requestBody)
     }
@@ -482,9 +472,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             transaction: transactionId,
             databaseId: databaseId
         )
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(rollbackRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(rollbackRequest, encoder: encoder)
         return try await request.send(method: .POST, path: "\(projectPath):rollback", body: requestBody)
     }
     
@@ -516,9 +504,8 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
                 )
         }
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(runQueryRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(runQueryRequest, encoder: encoder)
+        
         return try await request.send(method: .POST, path: "\(projectPath):runQuery", body: requestBody)
     }
     
@@ -538,9 +525,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(queryRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(queryRequest, encoder: encoder)
         
         return try await request.send(
             method: .POST,
@@ -563,9 +548,8 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        let requestBody = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(queryRequest))
-        )
+        let requestBody = try HTTPClientRequest.Body(queryRequest, encoder: encoder)
+        
         return try await request.send(
             method: .POST,
             path: "\(projectPath):runAggregationQuery",

@@ -110,9 +110,7 @@ public final class GoogleCloudPubSubSubscriptionsAPI: SubscriptionsAPI {
         ackIds: [String]
     ) async throws -> EmptyResponse {
         let acks = AcknowledgeRequest(ackIds: ackIds)
-        let body = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(acks))
-        )
+        let body = try HTTPClientRequest.Body(acks, encoder: encoder)
 
         return try await request.send(
             method: .POST,
@@ -194,9 +192,7 @@ public final class GoogleCloudPubSubSubscriptionsAPI: SubscriptionsAPI {
             detached: detached
         )
         
-        let body = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(subscription))
-        )
+        let body = try HTTPClientRequest.Body(subscription, encoder: encoder)
         
         return try await request.send(
             method: .PUT,
