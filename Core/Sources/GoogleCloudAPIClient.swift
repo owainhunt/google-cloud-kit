@@ -42,7 +42,7 @@ public extension GoogleCloudAPIClient {
                     client: client,
                     credentials: gCloudCredentials
                 )
-                projectId = gCloudCredentials.quotaProjectId
+                projectId = gCloudCredentials.projectId
                 
             case .serviceAccount(let serviceAccountCredentials):
                 provider = ServiceAccountCredentialsProvider(

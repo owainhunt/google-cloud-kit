@@ -42,7 +42,7 @@ public actor GCloudCredentialsProvider: AccessTokenProvider {
         var request = HTTPClientRequest(url: Self.endpoint)
         request.method = .POST
         request.headers = ["Content-Type": "application/x-www-form-urlencoded",
-                           "X-Goog-User-Project": credentials.quotaProjectId]
+                           "X-Goog-User-Project": credentials.projectId]
         request.body = .bytes(ByteBuffer(string: "client_id=\(credentials.clientId)&client_secret=\(credentials.clientSecret)&refresh_token=\(credentials.refreshToken)&grant_type=refresh_token"))
         return request
     }
@@ -68,7 +68,11 @@ public actor GCloudCredentialsProvider: AccessTokenProvider {
 public struct GCloudCredentials: Codable {
     public let clientId: String
     public let clientSecret: String
-    public let quotaProjectId: String
+    private let quotaProjectId: String?
     public let refreshToken: String
     public let type: String
+    
+    public var projectId: String {
+        quotaProjectId ?? ProcessInfo.processInfo.environment["PROJECT_ID"] ?? "default"
+    }
 }
