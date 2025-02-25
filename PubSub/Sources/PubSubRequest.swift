@@ -5,7 +5,7 @@ import NIOFoundationCompat
 import NIOHTTP1
 import AsyncHTTPClient
 
-class GoogleCloudPubSubRequest: GoogleCloudAPIClient {
+struct GoogleCloudPubSubRequest: GoogleCloudAPIClient {
     
     let tokenProvider: AccessTokenProvider
     let httpClient: HTTPClient

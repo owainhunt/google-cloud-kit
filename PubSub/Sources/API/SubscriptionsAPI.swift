@@ -111,7 +111,7 @@ public final class GoogleCloudPubSubSubscriptionsAPI: SubscriptionsAPI {
     ) async throws -> EmptyResponse {
         let acks = AcknowledgeRequest(ackIds: ackIds)
         let body = try HTTPClientRequest.Body.bytes(
-            .init(data: encoder.encode(ackIds))
+            .init(data: encoder.encode(acks))
         )
 
         return try await request.send(

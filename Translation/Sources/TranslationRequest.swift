@@ -6,6 +6,7 @@ import NIOHTTP1
 import AsyncHTTPClient
 
 struct GoogleCloudTranslationRequest: GoogleCloudAPIClient {
+    
     let tokenProvider: AccessTokenProvider
     let httpClient: HTTPClient
     let decoder: JSONDecoder

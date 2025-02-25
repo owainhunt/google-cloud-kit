@@ -6,14 +6,17 @@ import NIOHTTP1
 import AsyncHTTPClient
 
 struct GoogleCloudSecretManagerRequest: GoogleCloudAPIClient {
+    
     let tokenProvider: AccessTokenProvider
     let httpClient: HTTPClient
     let decoder: JSONDecoder
     let project: String
     
-    init(tokenProvider: AccessTokenProvider,
-         client: HTTPClient,
-         project: String) {
+    init(
+        tokenProvider: AccessTokenProvider,
+        client: HTTPClient,
+        project: String
+    ) {
         self.tokenProvider = tokenProvider
         self.httpClient = client
         let dateFormatter = DateFormatter()
@@ -24,11 +27,13 @@ struct GoogleCloudSecretManagerRequest: GoogleCloudAPIClient {
         self.project = project
     }
     
-    func send<T: Codable>(method: HTTPMethod,
-                            headers: HTTPHeaders = [:],
-                            path: String,
-                            query: String = "",
-                            body: HTTPClientRequest.Body = .bytes(.init(data: .init()))) async throws -> T {
+    func send<T: Codable>(
+        method: HTTPMethod,
+        headers: HTTPHeaders = [:],
+        path: String,
+        query: String = "",
+        body: HTTPClientRequest.Body = .bytes(.init(data: .init()))
+    ) async throws -> T {
         let accessToken = try await tokenProvider.getAccessToken()
         var _headers: HTTPHeaders = ["Authorization": "Bearer \(accessToken)",
                                      "Content-Type": "application/json"]

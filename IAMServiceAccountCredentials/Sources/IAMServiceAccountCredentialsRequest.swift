@@ -5,7 +5,7 @@ import NIOFoundationCompat
 import NIOHTTP1
 import AsyncHTTPClient
 
-class IAMServiceAccountCredentialsRequest: GoogleCloudAPIClient {
+struct IAMServiceAccountCredentialsRequest: GoogleCloudAPIClient {
     
     let tokenProvider: AccessTokenProvider
     let httpClient: HTTPClient
