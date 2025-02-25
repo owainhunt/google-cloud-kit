@@ -22,9 +22,11 @@ public actor ServiceAccountCredentialsProvider: AccessTokenProvider {
     let decoder = JSONDecoder()
     let scope: [GoogleCloudAPIScope]
     
-    public init(client: HTTPClient,
-                credentials: ServiceAccountCredentials,
-                scope: [GoogleCloudAPIScope]) {
+    public init(
+        client: HTTPClient,
+        credentials: ServiceAccountCredentials,
+        scope: [GoogleCloudAPIScope]
+    ) {
         self.client = client
         self.credentials = credentials
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -44,8 +46,8 @@ public actor ServiceAccountCredentialsProvider: AccessTokenProvider {
         }
     }
     
-    private func buildRequest() throws -> HTTPClientRequest {
-        let assertion = try generateAssertion()
+    private func buildRequest() async throws -> HTTPClientRequest {
+        let assertion = try await generateAssertion()
         var request = HTTPClientRequest(url: credentials.tokenUri)
         request.method = .POST
         request.headers = ["Content-Type": "application/x-www-form-urlencoded"]
@@ -61,15 +63,16 @@ public actor ServiceAccountCredentialsProvider: AccessTokenProvider {
         if scope.isEmpty {
         // https://google.aip.dev/auth/4111
             let expiration = Date().addingTimeInterval(3600).timeIntervalSince1970
-            let payload = ServiceAccountCredentialsSelfSignedJWTPayload(iss: .init(value: credentials.clientEmail),
-                                                                        exp: .init(value: Date().addingTimeInterval(3600)),
-                                                                        iat: .init(value: Date()),
-                                                                        sub: .init(value: credentials.clientEmail),
-                                                                        scope: scope.map(\.value).joined(separator: " "))
+            let payload = ServiceAccountCredentialsSelfSignedJWTPayload(
+                iss: .init(value: credentials.clientEmail),
+                exp: .init(value: Date().addingTimeInterval(3600)),
+                iat: .init(value: Date()),
+                sub: .init(value: credentials.clientEmail),
+                scope: scope.map(\.value).joined(separator: " ")
+            )
             
-            let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
-            
-            let token = try JWTSigner.rs256(key: privateKey).sign(payload, kid: .init(string: credentials.privateKeyId))
+            let privateKey = try Insecure.RSA.PrivateKey(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
+            let token = try await JWTKeyCollection().add(rsa: privateKey, digestAlgorithm: .sha256).sign(payload)
             
             accessToken = AccessToken(accessToken: token, tokenType: "", expiresIn: Int(expiration))
             
@@ -92,17 +95,18 @@ public actor ServiceAccountCredentialsProvider: AccessTokenProvider {
         }
     }
     
-    private func generateAssertion() throws -> String {
-        let payload = ServiceAccountCredentialsJWTPayload(iss: .init(value: credentials.clientEmail),
-                                                          aud: .init(value: Self.audience),
-                                                          exp: .init(value: Date().addingTimeInterval(3600)),
-                                                          iat: .init(value: Date()),
-                                                          sub: .init(value: credentials.clientEmail),
-                                                          scope: scope.map(\.value).joined(separator: " "))
+    private func generateAssertion() async throws -> String {
+        let payload = ServiceAccountCredentialsJWTPayload(
+            iss: .init(value: credentials.clientEmail),
+            aud: .init(value: Self.audience),
+            exp: .init(value: Date().addingTimeInterval(3600)),
+            iat: .init(value: Date()),
+            sub: .init(value: credentials.clientEmail),
+            scope: scope.map(\.value).joined(separator: " ")
+        )
         
-        let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
-        
-        return try JWTSigner.rs256(key: privateKey).sign(payload, kid: .init(string: credentials.privateKeyId))
+        let privateKey = try Insecure.RSA.PrivateKey(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
+        return try await JWTKeyCollection().add(rsa: privateKey, digestAlgorithm: .sha256).sign(payload)
     }
 }
 
@@ -135,7 +139,7 @@ struct ServiceAccountCredentialsJWTPayload: JWTPayload {
     /// The scope of access being requested.
     var scope: String
     
-    public func verify(using signer: JWTSigner) throws {
+    public func verify(using algorithm: some JWTAlgorithm) async throws {
         try exp.verifyNotExpired()
     }
 }
@@ -152,7 +156,7 @@ struct ServiceAccountCredentialsSelfSignedJWTPayload: JWTPayload {
     /// The scope of access being requested.
     var scope: String
     
-    public func verify(using signer: JWTSigner) throws {
+    public func verify(using algorithm: some JWTAlgorithm) async throws {
         try exp.verifyNotExpired()
     }
 }
