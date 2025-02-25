@@ -45,7 +45,7 @@ public extension SecretVersionAPI {
     ///   - etag: Etag of the `SecretVersion`. The request succeeds if it matches the etag of the currently stored secret version object. If the etag is omitted, the request succeeds.
     /// - Returns: `SecretVersion`
     func enable(secret: String, version: String = "latest", etag: String? = nil) async throws -> SecretVersion {
-        try await destroy(secret: secret, version: version, etag: etag)
+        try await enable(secret: secret, version: version, etag: etag)
     }
     
     /// Enables a `SecretVersion`.
@@ -57,7 +57,7 @@ public extension SecretVersionAPI {
     ///   - etag: Etag of the `SecretVersion`. The request succeeds if it matches the etag of the currently stored secret version object. If the etag is omitted, the request succeeds.
     /// - Returns: `SecretVersion`
     func disable(secret: String, version: String = "latest", etag: String? = nil) async throws -> SecretVersion {
-        try await destroy(secret: secret, version: version, etag: etag)
+        try await disable(secret: secret, version: version, etag: etag)
     }
     
     
@@ -72,6 +72,7 @@ public extension SecretVersionAPI {
 }
 
 public final class GoogleCloudSecretManagerSecretVersionAPI: SecretVersionAPI {
+    
     let endpoint: String
     let request: GoogleCloudSecretManagerRequest
     
@@ -84,11 +85,18 @@ public final class GoogleCloudSecretManagerSecretVersionAPI: SecretVersionAPI {
         "\(endpoint)/v1/projects/\(request.project)/secrets"
     }
     
-    public func access(_ secret: String, version: String = "latest") async throws -> SecretVersionData {
+    public func access(
+        secret: String,
+        version: String = "latest"
+    ) async throws -> SecretVersionData {
         try await request.send(method: .GET, path: "\(secretsPath)/\(secret)/versions/\(version):access")
     }
     
-    public func destroy(secret: String, version: String = "latest", etag: String?) async throws -> SecretVersion {
+    public func destroy(
+        secret: String,
+        version: String = "latest",
+        etag: String?
+    ) async throws -> SecretVersion {
         var body: Data = Data()
         if let etag = etag {
             body = try JSONSerialization.data(withJSONObject: ["etag": etag], options: [])
@@ -97,7 +105,11 @@ public final class GoogleCloudSecretManagerSecretVersionAPI: SecretVersionAPI {
         return try await request.send(method: .POST, path: "\(secretsPath)/\(secret)/versions/\(version):destroy", body: .bytes(.init(data: body)))
     }
     
-    public func enable(secret: String, version: String = "latest", etag: String?) async throws -> SecretVersion {
+    public func enable(
+        secret: String,
+        version: String = "latest",
+        etag: String?
+    ) async throws -> SecretVersion {
         var body: Data = Data()
         if let etag = etag {
             body = try JSONSerialization.data(withJSONObject: ["etag": etag], options: [])
@@ -106,7 +118,11 @@ public final class GoogleCloudSecretManagerSecretVersionAPI: SecretVersionAPI {
         return try await request.send(method: .POST, path: "\(secretsPath)/\(secret)/versions/\(version):enable", body: .bytes(.init(data: body)))
     }
     
-    public func disable(secret: String, version: String = "latest", etag: String?) async throws -> SecretVersion {
+    public func disable(
+        secret: String,
+        version: String = "latest",
+        etag: String?
+    ) async throws -> SecretVersion {
         var body: Data = Data()
         if let etag = etag {
             body = try JSONSerialization.data(withJSONObject: ["etag": etag], options: [])
@@ -115,7 +131,10 @@ public final class GoogleCloudSecretManagerSecretVersionAPI: SecretVersionAPI {
         return try await request.send(method: .POST, path: "\(secretsPath)/\(secret)/versions/\(version):disable", body: .bytes(.init(data: body)))
     }
     
-    public func get(secret: String, version: String = "latest") async throws -> SecretVersion {
+    public func get(
+        secret: String,
+        version: String = "latest"
+    ) async throws -> SecretVersion {
         try await request.send(method: .GET, path: "\(secretsPath)/\(secret)/versions/\(version)")
     }
 }
