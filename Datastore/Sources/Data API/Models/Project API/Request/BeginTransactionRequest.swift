@@ -1,6 +1,6 @@
 import Core
 
-public struct BeginTransactionRequest: GoogleCloudModel {
+public struct BeginTransactionRequest: Codable {
     public init(
         transactionOptions: TransactionOptions? = nil,
         databaseId: String? = nil

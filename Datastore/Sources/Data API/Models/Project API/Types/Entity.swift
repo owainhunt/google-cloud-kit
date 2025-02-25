@@ -4,7 +4,7 @@ public typealias EntityProperties = [String: Value]
 
 /// A Datastore data object.
 /// An entity is limited to 1 megabyte when stored. That roughly corresponds to a limit of 1 megabyte for the serialized form of this message.
-public struct Entity: GoogleCloudModel {
+public struct Entity: Codable {
     
     /// The entity's key.
     /// An entity must have a key, unless otherwise documented (for example, an entity in Value.entity_value may have no key). An entity's kind is its key path's last element's kind, or null if it has no key.
@@ -18,7 +18,7 @@ public struct Entity: GoogleCloudModel {
     }
 }
 
-public struct EntityResult: GoogleCloudModel {
+public struct EntityResult: Codable {
     public let cursor: String
     public let entity: Entity
     public let version: String

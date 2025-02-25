@@ -5,7 +5,7 @@ public enum DatastoreQuery {
     case gqlQuery(GqlQuery)
 }
 
-public struct Query: GoogleCloudModel {
+public struct Query: Codable {
     
     /// The properties to make distinct. The query results will contain the first result for each distinct combination of values for the given properties (if empty, all results are returned).
     public let distinctOn: [PropertyReference]?
@@ -77,7 +77,7 @@ public struct Query: GoogleCloudModel {
 }
 
 /// A filter that merges multiple other filters using the given operator.
-public struct CompositeFilter: GoogleCloudModel {
+public struct CompositeFilter: Codable {
     
     /// The list of filters to combine. Must contain at least one filter.
     public let filters: [Filter]
@@ -85,7 +85,7 @@ public struct CompositeFilter: GoogleCloudModel {
     public let op: Operator
     
     /// A composite filter operator.
-    public enum Operator: String, RawRepresentable, GoogleCloudModel {
+    public enum Operator: String, RawRepresentable, Codable {
         /// The results are required to satisfy each of the combined filters.
         case and = "AND"
         /// Documents are required to satisfy at least one of the combined filters.
@@ -112,7 +112,7 @@ public struct CompositeFilter: GoogleCloudModel {
 }
 
 /// A filter on a specific property.
-public struct PropertyFilter: GoogleCloudModel {
+public struct PropertyFilter: Codable {
     
     /// The operator to filter by.
     public let op: Operator?
@@ -121,7 +121,7 @@ public struct PropertyFilter: GoogleCloudModel {
     /// The value to compare the property to.
     public let value: Value?
     
-    public enum Operator: String, RawRepresentable, GoogleCloudModel {
+    public enum Operator: String, RawRepresentable, Codable {
         case lessThan = "LESS_THAN"
         case lessThanOrEqual = "LESS_THAN_OR_EQUAL"
         case greaterThan = "GREATER_THAN"
@@ -140,7 +140,7 @@ public struct PropertyFilter: GoogleCloudModel {
 }
 
 /// A representation of a property in a projection.
-public struct Projection: GoogleCloudModel {
+public struct Projection: Codable {
     
     /// The property to project.
     public let property: PropertyReference
@@ -150,14 +150,14 @@ public struct Projection: GoogleCloudModel {
     }
 }
 
-public struct PropertyOrder: GoogleCloudModel {
+public struct PropertyOrder: Codable {
     
     /// The direction to order by.
     public let direction: Direction
     /// The property to order by.
     public let property: PropertyReference
     
-    public enum Direction: String, RawRepresentable, GoogleCloudModel {
+    public enum Direction: String, RawRepresentable, Codable {
         case ascending = "ASCENDING"
         case descending = "DESCENDING"
     }
@@ -170,7 +170,7 @@ public struct PropertyOrder: GoogleCloudModel {
 }
 
 /// A representation of a kind.
-public struct KindExpression: GoogleCloudModel {
+public struct KindExpression: Codable {
     
     /// The name of the kind.
     public let name: String
@@ -181,7 +181,7 @@ public struct KindExpression: GoogleCloudModel {
 }
 
 /// A reference to a property relative to the kind expressions.
-public struct PropertyReference: GoogleCloudModel {
+public struct PropertyReference: Codable {
     
     /// The name of the property. If name includes "."s, it may be interpreted as a property name path.
     public let name: String
@@ -192,7 +192,7 @@ public struct PropertyReference: GoogleCloudModel {
 }
 
 /// A holder for any type of filter.
-public struct Filter: GoogleCloudModel {
+public struct Filter: Codable {
     
     public enum TypedFilter {
         case composite(CompositeFilter)
@@ -220,7 +220,7 @@ public struct Filter: GoogleCloudModel {
     }
 }
 
-public struct QueryResultBatch: GoogleCloudModel {
+public struct QueryResultBatch: Codable {
     
     /// A cursor that points to the position after the last result in the batch.
     public let endCursor: String?
@@ -238,7 +238,7 @@ public struct QueryResultBatch: GoogleCloudModel {
     /// In a single transaction, subsequent query result batches for the same query can have a greater snapshot version number. Each batch's snapshot version is valid for all preceding batches. The value will be zero for eventually consistent queries.
     public let snapshotVersion: String?
     
-    public enum ResultType: String, RawRepresentable, GoogleCloudModel {
+    public enum ResultType: String, RawRepresentable, Codable {
         /// The key and properties.
         case full = "FULL"
         /// A projected subset of properties. The entity may have no key.
@@ -247,7 +247,7 @@ public struct QueryResultBatch: GoogleCloudModel {
         case keyOnly = "KEY_ONLY"
     }
     
-    public enum MoreResultsType: String, RawRepresentable, GoogleCloudModel {
+    public enum MoreResultsType: String, RawRepresentable, Codable {
         /// There may be additional batches to fetch from this query.
         case notFinished = "NOT_FINISHED"
         /// The query is finished, but there may be more results after the limit.
@@ -275,7 +275,7 @@ public struct QueryResultBatch: GoogleCloudModel {
     }
 }
 
-public struct GqlQuery: GoogleCloudModel {
+public struct GqlQuery: Codable {
     
     /// When false, the query string must not contain any literals and instead must bind all values. For example, SELECT * FROM Kind WHERE a = 'string literal' is not allowed, while SELECT * FROM Kind WHERE a = @value is.
     public let allowLiterals: Bool?
@@ -302,7 +302,7 @@ public struct GqlQuery: GoogleCloudModel {
 
 public typealias GqlQueryNamedBindings = [String: GqlQueryParameter]
 
-public struct GqlQueryParameter: GoogleCloudModel {
+public struct GqlQueryParameter: Codable {
     
     public enum TypedGqlQueryParameter {
         case value(Value)

@@ -1,6 +1,6 @@
 import Core
 
-public struct LookupResponse: GoogleCloudModel {
+public struct LookupResponse: Codable {
     public init(
         deferred: [Key]? = nil,
         found: [EntityResult]? = nil,
@@ -18,13 +18,13 @@ public struct LookupResponse: GoogleCloudModel {
     public let missing: [MissingEntityResult]?
 }
 
-public struct MissingEntityResult: GoogleCloudModel {
+public struct MissingEntityResult: Codable {
     /// A KEY_ONLY entity
     public let entity: MissingEntity
     /// the version of the snapshot that was used to look up the entity
     public let version: String
     
-    public struct MissingEntity: GoogleCloudModel {
+    public struct MissingEntity: Codable {
         public let key: Key
     }
 }

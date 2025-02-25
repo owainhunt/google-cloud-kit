@@ -1,6 +1,6 @@
 import Core
 
-struct RunAggregationQueryRequest: GoogleCloudModel {
+struct RunAggregationQueryRequest: Codable {
     
     init(
         gqlQuery: GqlQuery,

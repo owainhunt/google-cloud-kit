@@ -1,6 +1,6 @@
 import Core
 
-public struct MutationResult: GoogleCloudModel {
+public struct MutationResult: Codable {
     public init(conflictDetected: Bool? = false, key: Key? = nil, version: String) {
         self.conflictDetected = conflictDetected
         self.key = key

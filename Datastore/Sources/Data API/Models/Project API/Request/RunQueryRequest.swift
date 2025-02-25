@@ -1,6 +1,6 @@
 import Core
 
-public struct RunQueryRequest: GoogleCloudModel {
+public struct RunQueryRequest: Codable {
     
     public init(
         gqlQuery: GqlQuery? = nil,

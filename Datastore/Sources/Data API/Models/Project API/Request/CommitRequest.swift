@@ -1,6 +1,6 @@
 import Core
 
-public struct CommitRequest: GoogleCloudModel {
+public struct CommitRequest: Codable {
     
     public init(
         mode: Mode = .nonTransactional,
@@ -29,7 +29,7 @@ public struct CommitRequest: GoogleCloudModel {
     public let databaseId: String?
         
     /// The modes available for commits.
-    public enum Mode: GoogleCloudModel {
+    public enum Mode: Codable {
         
         /// Transactional: The mutations are either all applied, or none are applied.
         /// The associated value is a transaction ID obtained from a call to beginTransaction()
@@ -63,7 +63,7 @@ public struct CommitRequest: GoogleCloudModel {
     }
     
     /// A mutation to apply to an entity.
-    public struct Mutation: GoogleCloudModel {
+    public struct Mutation: Codable {
         
         public enum TypedMutation {
             case insert(Entity)

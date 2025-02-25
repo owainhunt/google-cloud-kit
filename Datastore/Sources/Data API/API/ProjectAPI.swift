@@ -8,36 +8,55 @@ public protocol DatastoreProjectAPI {
     /// - Parameters:
     ///   - keys: A list of keys with incomplete key paths for which to allocate IDs. No key may be reserved/read-only.
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func allocateIDs(keys: [Key], databaseId: String?) -> EventLoopFuture<AllocateIdsResponse>
+    func allocateIDs(
+        keys: [Key],
+        databaseId: String?
+    ) async throws -> AllocateIdsResponse
     
     /// Prevents the supplied keys' IDs from being auto-allocated by Cloud Datastore.
     /// - Parameters:
     ///   - databaseId: If not empty, the ID of the database against which to make the request.
     ///   - keys: A list of keys with complete key paths whose numeric IDs should not be auto-allocated.
-    func reserveIDs(databaseId: String?, keys: [Key]) -> EventLoopFuture<EmptyResponse>
+    func reserveIDs(
+        databaseId: String?,
+        keys: [Key]
+    ) async throws -> EmptyResponse
     
     /// Begins a new transaction.
     /// - Parameters:
     ///   - transactionOptions: Options for a new transaction.
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func beginTransaction(transactionOptions: TransactionOptions, databaseId: String?) -> EventLoopFuture<BeginTransactionResponse>
-       
+    func beginTransaction(
+        transactionOptions: TransactionOptions,
+        databaseId: String?
+    ) async throws -> BeginTransactionResponse
+    
     /// Commits a transaction, optionally creating, deleting or modifying some entities.
     /// - Parameters:
     ///   - mode: The type of commit to perform.
     ///   - mutations: The mutations to perform.
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func commit(mode: CommitRequest.Mode, mutations: [CommitRequest.Mutation], databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func commit(
+        mode: CommitRequest.Mode,
+        mutations: [CommitRequest.Mutation],
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Looks up entities by key.
     /// - Parameter keys: Keys of entities to look up.
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func lookup(keys: [Key], databaseId: String?) -> EventLoopFuture<LookupResponse>
+    func lookup(
+        keys: [Key],
+        databaseId: String?
+    ) async throws -> LookupResponse
     
     /// Rolls back a transaction.
     /// - Parameter transactionId: The transaction identifier, returned by a call to beginTransaction(transactionOptions:).
     ///   - databaseId: The ID of the database against which to make the request.
-    func rollback(transactionId: String, databaseId: String?) -> EventLoopFuture<EmptyResponse>
+    func rollback(
+        transactionId: String,
+        databaseId: String?
+    ) async throws -> EmptyResponse
     
     /// Queries for entities.
     /// - Parameters:
@@ -45,7 +64,12 @@ public protocol DatastoreProjectAPI {
     ///   - readOptions: The options for this query.
     ///   - datastoreQuery: A query to run, either of normal or GQL type
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func runQuery(partitionId: PartitionId, readOptions: ReadOptions?, datastoreQuery: DatastoreQuery, databaseId: String?) -> EventLoopFuture<RunQueryResponse>
+    func runQuery(
+        partitionId: PartitionId,
+        readOptions: ReadOptions?,
+        datastoreQuery: DatastoreQuery,
+        databaseId: String?
+    ) async throws -> RunQueryResponse
     
     /// Runs a query and performs an aggregation (sum, count or average) on the results
     /// - Parameters:
@@ -54,7 +78,13 @@ public protocol DatastoreProjectAPI {
     ///   - partitionId: The (optional) namespace and partition against which to run the query
     ///   - readOptions: The options for this query
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func runAggregationQuery(query: Query, aggregations: [Aggregation], partitionId: PartitionId, readOptions: ReadOptions?, databaseId: String?) -> EventLoopFuture<RunAggregationQueryResponse>
+    func runAggregationQuery(
+        query: Query,
+        aggregations: [Aggregation],
+        partitionId: PartitionId,
+        readOptions: ReadOptions?,
+        databaseId: String?
+    ) async throws -> RunAggregationQueryResponse
     
     /// Runs an aggregation query in GQL format
     /// - Parameters:
@@ -62,133 +92,280 @@ public protocol DatastoreProjectAPI {
     ///   - partitionId: The namespace and partition against which to run the query
     ///   - readOptions: The options for this query
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func runAggregationQuery(gqlQuery: GqlQuery, partitionId: PartitionId, readOptions: ReadOptions?, databaseId: String?) -> EventLoopFuture<RunAggregationQueryResponse>
+    func runAggregationQuery(
+        gqlQuery: GqlQuery,
+        partitionId: PartitionId,
+        readOptions: ReadOptions?,
+        databaseId: String?
+    ) async throws -> RunAggregationQueryResponse
     
     /// Inserts an entity
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with a single insert mutation
     /// - Parameters:
     ///   - entity: The entity to insert
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func insert(_ entity: Entity, databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func insert(
+        _ entity: Entity,
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Inserts multiple entities
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with multiple insert mutations
     /// - Parameters:
     ///   - entity: The entities to insert
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func insert(_ entities: [Entity], databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func insert(
+        _ entities: [Entity],
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Updates an entity
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with a single update mutation
     /// - Parameters:
     ///   - entity: The entities to update
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func update(_ entity: Entity, databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func update(
+        _ entity: Entity,
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Updates multiple entities
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with multiple update mutations
     /// - Parameters:
     ///   - entity: The entities to update
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func update(_ entities: [Entity], databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func update(
+        _ entities: [Entity],
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Upserts (update-or-insert) an entity
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with a single upsert mutation
     /// - Parameters:
     ///   - entity: The entity to upsert
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func upsert(_ entity: Entity, databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func upsert(
+        _ entity: Entity,
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Upserts multiple entities
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with multiple upsert mutations
     /// - Parameters:
     ///   - entity: The entities to upsert
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func upsert(_ entities: [Entity], databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func upsert(
+        _ entities: [Entity],
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Deletes an entity
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with a single delete mutation
     /// - Parameters:
     ///   - key: The key of the entity to delete
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-   func delete(_ key: Key, databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func delete(
+        _ key: Key,
+        databaseId: String?
+    ) async throws -> CommitResponse
     
     /// Deletes multiple entities
     /// Convenience method equivalent to calling `commit(mode:mutations:)` with multiple delete mutations
     /// - Parameters:
     ///   - key: The keys of the entities to delete
     ///   - databaseId: The ID of the database against which to make the request. `nil` or an empty string refers to the default database.
-    func delete(_ keys: [Key], databaseId: String?) -> EventLoopFuture<CommitResponse>
+    func delete(
+        _ keys: [Key],
+        databaseId: String?
+    ) async throws -> CommitResponse
 }
 
 extension DatastoreProjectAPI {
     
-    public func allocateIDs(keys: [Key], databaseId: String? = nil) -> EventLoopFuture<AllocateIdsResponse> {
-        return allocateIDs(keys: keys, databaseId: databaseId)
+    public func allocateIDs(
+        keys: [Key],
+        databaseId: String? = nil
+    ) async throws -> AllocateIdsResponse {
+        return try await allocateIDs(
+            keys: keys,
+            databaseId: databaseId
+        )
     }
     
-    public func reserveIDs(databaseId: String? = nil, keys: [Key]) -> EventLoopFuture<EmptyResponse> {
-        return reserveIDs(databaseId: databaseId, keys: keys)
+    public func reserveIDs(
+        databaseId: String? = nil,
+        keys: [Key]
+    ) async throws -> EmptyResponse {
+        return try await reserveIDs(
+            databaseId: databaseId,
+            keys: keys
+        )
     }
     
-    public func beginTransaction(transactionOptions: TransactionOptions = .init(), databaseId: String? = nil) -> EventLoopFuture<BeginTransactionResponse> {
-        return beginTransaction(transactionOptions: transactionOptions, databaseId: databaseId)
+    public func beginTransaction(
+        transactionOptions: TransactionOptions = .init(),
+        databaseId: String? = nil
+    ) async throws -> BeginTransactionResponse {
+        return try await beginTransaction(
+            transactionOptions: transactionOptions,
+            databaseId: databaseId
+        )
     }
     
-    public func commit(mode: CommitRequest.Mode = .nonTransactional, mutations: [CommitRequest.Mutation], databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return commit(mode: mode, mutations: mutations, databaseId: databaseId)
+    public func commit(
+        mode: CommitRequest.Mode = .nonTransactional,
+        mutations: [CommitRequest.Mutation],
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await commit(
+            mode: mode,
+            mutations: mutations,
+            databaseId: databaseId
+        )
     }
     
-    public func lookup(keys: [Key], databaseId: String? = nil) -> EventLoopFuture<LookupResponse> {
-        return lookup(keys: keys, databaseId: databaseId)
+    public func lookup(
+        keys: [Key],
+        databaseId: String? = nil
+    ) async throws -> LookupResponse {
+        return try await lookup(
+            keys: keys,
+            databaseId: databaseId
+        )
     }
     
-    public func rollback(transactionId: String, databaseId: String? = nil) -> EventLoopFuture<EmptyResponse> {
-        return rollback(transactionId: transactionId, databaseId: databaseId)
-    }
-   
-    public func runQuery(partitionId: PartitionId, readOptions: ReadOptions? = nil, datastoreQuery: DatastoreQuery, databaseId: String? = nil) -> EventLoopFuture<RunQueryResponse> {
-        return runQuery(partitionId: partitionId, readOptions: readOptions, datastoreQuery: datastoreQuery, databaseId: databaseId)
-    }
-    
-    public func runAggregationQuery(query: Query, aggregations: [Aggregation], partitionId: PartitionId, readOptions: ReadOptions? = nil, databaseId: String? = nil) -> EventLoopFuture<RunAggregationQueryResponse> {
-        return runAggregationQuery(query: query, aggregations: aggregations, partitionId: partitionId, readOptions: readOptions, databaseId: databaseId)
+    public func rollback(
+        transactionId: String,
+        databaseId: String? = nil
+    ) async throws -> EmptyResponse {
+        return try await rollback(
+            transactionId: transactionId,
+            databaseId: databaseId
+        )
     }
     
-    public func runAggregationQuery(gqlQuery: GqlQuery, partitionId: PartitionId, readOptions: ReadOptions? = nil, databaseId: String? = nil) -> EventLoopFuture<RunAggregationQueryResponse> {
-        return runAggregationQuery(gqlQuery: gqlQuery, partitionId: partitionId, readOptions: readOptions, databaseId: databaseId)
+    public func runQuery(
+        partitionId: PartitionId,
+        readOptions: ReadOptions? = nil,
+        datastoreQuery: DatastoreQuery,
+        databaseId: String? = nil
+    ) async throws -> RunQueryResponse {
+        return try await runQuery(
+            partitionId: partitionId,
+            readOptions: readOptions,
+            datastoreQuery: datastoreQuery,
+            databaseId: databaseId
+        )
     }
     
-    public func insert(_ entity: Entity, databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return insert([entity], databaseId: databaseId)
+    public func runAggregationQuery(
+        query: Query,
+        aggregations: [Aggregation],
+        partitionId: PartitionId,
+        readOptions: ReadOptions? = nil,
+        databaseId: String? = nil
+    ) async throws -> RunAggregationQueryResponse {
+        return try await runAggregationQuery(
+            query: query,
+            aggregations: aggregations,
+            partitionId: partitionId,
+            readOptions: readOptions,
+            databaseId: databaseId
+        )
     }
     
-    public func insert(_ entities: [Entity], databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return insert(entities, databaseId: databaseId)
+    public func runAggregationQuery(
+        gqlQuery: GqlQuery,
+        partitionId: PartitionId,
+        readOptions: ReadOptions? = nil,
+        databaseId: String? = nil
+    ) async throws -> RunAggregationQueryResponse {
+        return try await runAggregationQuery(
+            gqlQuery: gqlQuery,
+            partitionId: partitionId,
+            readOptions: readOptions,
+            databaseId: databaseId
+        )
     }
     
-    public func update(_ entity: Entity, databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return update(entity, databaseId: databaseId)
+    public func insert(
+        _ entity: Entity,
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await insert(
+            [entity],
+            databaseId: databaseId
+        )
     }
     
-    public func update(_ entities: [Entity], databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return update(entities, databaseId: databaseId)
+    public func insert(
+        _ entities: [Entity],
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await insert(
+            entities,
+            databaseId: databaseId
+        )
     }
     
-    public func upsert(_ entity: Entity, databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return upsert(entity, databaseId: databaseId)
+    public func update(
+        _ entity: Entity,
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await update(
+            entity,
+            databaseId: databaseId
+        )
     }
     
-    public func upsert(_ entities: [Entity], databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return upsert(entities, databaseId: databaseId)
+    public func update(
+        _ entities: [Entity],
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await update(
+            entities,
+            databaseId: databaseId
+        )
     }
     
-    public func delete(_ key: Key, databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return delete(key, databaseId: databaseId)
+    public func upsert(
+        _ entity: Entity,
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await upsert(
+            entity,
+            databaseId: databaseId
+        )
     }
     
-    public func delete(_ keys: [Key], databaseId: String? = nil) -> EventLoopFuture<CommitResponse> {
-        return delete(keys, databaseId: databaseId)
+    public func upsert(
+        _ entities: [Entity],
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await upsert(
+            entities,
+            databaseId: databaseId
+        )
+    }
+    
+    public func delete(
+        _ key: Key,
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await delete(
+            key,
+            databaseId: databaseId
+        )
+    }
+    
+    public func delete(
+        _ keys: [Key],
+        databaseId: String? = nil
+    ) async throws -> CommitResponse {
+        return try await delete(
+            keys,
+            databaseId: databaseId
+        )
     }
 }
 
@@ -213,105 +390,102 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func allocateIDs(
         keys: [Key],
         databaseId: String? = nil
-    ) -> EventLoopFuture<AllocateIdsResponse> {
+    ) async throws -> AllocateIdsResponse {
         
-        do {
-            let allocateIdsRequest = AllocateIdsRequest(
-                keys: keys,
-                databaseId: databaseId
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(allocateIdsRequest))
-            return request.send(method: .POST, path: "\(projectPath):allocateIds", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let allocateIdsRequest = AllocateIdsRequest(
+            keys: keys,
+            databaseId: databaseId
+        )
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(allocateIdsRequest))
+        )
+        
+        return try await request.send(method: .POST, path: "\(projectPath):allocateIds", body: requestBody)
     }
     
     public func reserveIDs(
         databaseId: String? = nil,
         keys: [Key]
-    ) -> EventLoopFuture<EmptyResponse> {
+    ) async throws -> EmptyResponse {
         
-        do {
-            let reserveIdsRequest = ReserveIdsRequest(
-                databaseId: databaseId,
-                keys: keys
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(reserveIdsRequest))
-            return request.send(method: .POST, path: "\(projectPath):reserveIds", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let reserveIdsRequest = ReserveIdsRequest(
+            databaseId: databaseId,
+            keys: keys
+        )
+        
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(reserveIdsRequest))
+        )
+        return try await request.send(method: .POST, path: "\(projectPath):reserveIds", body: requestBody)
+        
     }
     
     public func beginTransaction(
         transactionOptions: TransactionOptions = .init(),
         databaseId: String? = nil
-    ) -> EventLoopFuture<BeginTransactionResponse> {
-
-        do {
-            let transactionRequest = BeginTransactionRequest(
-                transactionOptions: transactionOptions,
-                databaseId: databaseId
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(transactionRequest))
-            return request.send(method: .POST, path: "\(projectPath):beginTransaction", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+    ) async throws -> BeginTransactionResponse {
+        
+        let transactionRequest = BeginTransactionRequest(
+            transactionOptions: transactionOptions,
+            databaseId: databaseId
+        )
+        
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(transactionRequest))
+        )
+        
+        return try await request.send(method: .POST, path: "\(projectPath):beginTransaction", body: requestBody)
     }
     
     public func commit(
         mode: CommitRequest.Mode = .nonTransactional,
         mutations: [CommitRequest.Mutation],
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
+    ) async throws -> CommitResponse {
         
-        do {
-            let commitRequest = CommitRequest(
-                mode: mode,
-                mutations: mutations,
-                databaseId: databaseId
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(commitRequest))
-            return request.send(method: .POST, path: "\(projectPath):commit", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let commitRequest = CommitRequest(
+            mode: mode,
+            mutations: mutations,
+            databaseId: databaseId
+        )
+        
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(commitRequest))
+        )
+        return try await request.send(method: .POST, path: "\(projectPath):commit", body: requestBody)
+        
     }
-
+    
     public func lookup(
         keys: [Key],
         databaseId: String? = nil
-    ) -> EventLoopFuture<LookupResponse> {
-
-        do {
-            let lookupRequest = LookupRequest(
-                keys: keys,
-                databaseId: databaseId
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(lookupRequest))
-            return request.send(method: .POST, path: "\(projectPath):lookup", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+    ) async throws -> LookupResponse {
+        
+        let lookupRequest = LookupRequest(
+            keys: keys,
+            databaseId: databaseId
+        )
+        
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(lookupRequest))
+        )
+        
+        return try await request.send(method: .POST, path: "\(projectPath):lookup", body: requestBody)
     }
     
     public func rollback(
         transactionId: String,
         databaseId: String? = nil
-    ) -> EventLoopFuture<EmptyResponse> {
+    ) async throws -> EmptyResponse {
         
-        do {
-            let rollbackRequest = RollbackRequest(
-                transaction: transactionId,
-                databaseId: databaseId
-            )
-            let body = try HTTPClient.Body.data(encoder.encode(rollbackRequest))
-            return request.send(method: .POST, path: "\(projectPath):rollback", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let rollbackRequest = RollbackRequest(
+            transaction: transactionId,
+            databaseId: databaseId
+        )
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(rollbackRequest))
+        )
+        return try await request.send(method: .POST, path: "\(projectPath):rollback", body: requestBody)
     }
     
     public func runQuery(
@@ -319,12 +493,11 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
         readOptions: ReadOptions? = nil,
         datastoreQuery: DatastoreQuery,
         databaseId: String? = nil
-    ) -> EventLoopFuture<RunQueryResponse> {
+    ) async throws -> RunQueryResponse {
         
-        do {
-            let runQueryRequest: RunQueryRequest
-            
-            switch datastoreQuery {
+        let runQueryRequest: RunQueryRequest
+        
+        switch datastoreQuery {
             case .query(let query):
                 runQueryRequest = RunQueryRequest(
                     gqlQuery: nil,
@@ -341,13 +514,12 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
                     readOptions: readOptions,
                     databaseId: databaseId
                 )
-            }
-            
-            let body = try HTTPClient.Body.data(encoder.encode(runQueryRequest))
-            return request.send(method: .POST, path: "\(projectPath):runQuery", body: body)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
         }
+        
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(runQueryRequest))
+        )
+        return try await request.send(method: .POST, path: "\(projectPath):runQuery", body: requestBody)
     }
     
     public func runAggregationQuery(
@@ -356,7 +528,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
         partitionId: PartitionId,
         readOptions: ReadOptions? = nil,
         databaseId: String? = nil
-    ) -> EventLoopFuture<RunAggregationQueryResponse> {
+    ) async throws -> RunAggregationQueryResponse {
         
         let queryRequest = RunAggregationQueryRequest(
             query: query,
@@ -366,16 +538,15 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        do {
-            let body = try HTTPClient.Body.data(encoder.encode(queryRequest))
-            return request.send(
-                method: .POST,
-                path: "\(projectPath):runAggregationQuery",
-                body: body
-            )
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(queryRequest))
+        )
+        
+        return try await request.send(
+            method: .POST,
+            path: "\(projectPath):runAggregationQuery",
+            body: requestBody
+        )
     }
     
     public func runAggregationQuery(
@@ -383,7 +554,7 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
         partitionId: PartitionId,
         readOptions: ReadOptions? = nil,
         databaseId: String = ""
-    ) -> EventLoopFuture<RunAggregationQueryResponse> {
+    ) async throws -> RunAggregationQueryResponse {
         
         let queryRequest = RunAggregationQueryRequest(
             gqlQuery: gqlQuery,
@@ -392,23 +563,22 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
             databaseId: databaseId
         )
         
-        do {
-            let body = try HTTPClient.Body.data(encoder.encode(queryRequest))
-            return request.send(
-                method: .POST,
-                path: "\(projectPath):runAggregationQuery",
-                body: body
-            )
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
+        let requestBody = try HTTPClientRequest.Body.bytes(
+            .init(data: encoder.encode(queryRequest))
+        )
+        return try await request.send(
+            method: .POST,
+            path: "\(projectPath):runAggregationQuery",
+            body: requestBody
+        )
+        
     }
     
     public func insert(
         _ entity: Entity,
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
-        return insert(
+    ) async throws -> CommitResponse {
+        return try await insert(
             [entity],
             databaseId: databaseId
         )
@@ -417,9 +587,9 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func insert(
         _ entities: [Entity],
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
+    ) async throws -> CommitResponse {
         let mutations = entities.map { CommitRequest.Mutation(.insert($0)) }
-        return commit(
+        return try await commit(
             mutations: mutations,
             databaseId: databaseId
         )
@@ -428,8 +598,8 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func update(
         _ entity: Entity,
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
-        return update(
+    ) async throws -> CommitResponse {
+        return try await update(
             [entity],
             databaseId: databaseId
         )
@@ -438,9 +608,9 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func update(
         _ entities: [Entity],
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
+    ) async throws -> CommitResponse {
         let mutations = entities.map { CommitRequest.Mutation(.update($0)) }
-        return commit(
+        return try await commit(
             mutations: mutations,
             databaseId: databaseId
         )
@@ -449,8 +619,8 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func upsert(
         _ entity: Entity,
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
-        return upsert(
+    ) async throws -> CommitResponse {
+        return try await upsert(
             [entity],
             databaseId: databaseId
         )
@@ -459,9 +629,9 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func upsert(
         _ entities: [Entity],
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
+    ) async throws -> CommitResponse {
         let mutations = entities.map { CommitRequest.Mutation(.upsert($0)) }
-        return commit(
+        return try await commit(
             mutations: mutations,
             databaseId: databaseId
         )
@@ -470,8 +640,8 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func delete(
         _ key: Key,
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
-        return delete(
+    ) async throws -> CommitResponse {
+        return try await delete(
             [key],
             databaseId: databaseId
         )
@@ -480,11 +650,12 @@ public final class GoogleCloudDatastoreProjectAPI: DatastoreProjectAPI {
     public func delete(
         _ keys: [Key],
         databaseId: String? = nil
-    ) -> EventLoopFuture<CommitResponse> {
+    ) async throws -> CommitResponse {
         let mutations = keys.map { CommitRequest.Mutation(.delete($0)) }
-        return commit(
+        return try await commit(
             mutations: mutations,
             databaseId: databaseId
         )
     }
 }
+

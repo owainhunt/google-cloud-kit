@@ -1,3 +1,3 @@
 import Core
 
-public struct EmptyResponse: GoogleCloudModel {}
+public struct EmptyResponse: Codable {}

@@ -1,6 +1,6 @@
 import Core
 
-public struct LookupRequest: GoogleCloudModel {
+public struct LookupRequest: Codable {
     public init(
         keys: [Key]? = nil,
         readOptions: ReadOptions? = nil,

@@ -1,6 +1,6 @@
 import Core
 
-public struct TransactionOptions: GoogleCloudModel {
+public struct TransactionOptions: Codable {
     
     public enum TypedTransactionOptions {
         case readOnly
@@ -28,9 +28,9 @@ public struct TransactionOptions: GoogleCloudModel {
     }
 }
 
-public struct ReadOnly: GoogleCloudModel {}
+public struct ReadOnly: Codable {}
 
-public struct ReadWrite: GoogleCloudModel {
+public struct ReadWrite: Codable {
     public init(previousTransaction: String) {
         self.previousTransaction = previousTransaction
     }

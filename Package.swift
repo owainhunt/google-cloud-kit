@@ -13,7 +13,7 @@ let package = Package(
             name: "GoogleCloudKit",
             targets: [
                 "Core",
-//                "Datastore",
+                "Datastore",
                 "IAMServiceAccountCredentials",
                 "PubSub",
                 "SecretManager",
@@ -29,10 +29,10 @@ let package = Package(
             name: "GoogleCloudIAMServiceAccountCredentials",
             targets: ["IAMServiceAccountCredentials"]
         ),
-//        .library(
-//            name: "GoogleCloudDatastore",
-//            targets: ["Datastore"]
-//        ),
+        .library(
+            name: "GoogleCloudDatastore",
+            targets: ["Datastore"]
+        ),
         .library(
             name: "GoogleCloudPubSub",
             targets: ["PubSub"]
@@ -70,13 +70,13 @@ let package = Package(
             ],
             path: "Storage/Sources/"
         ),
-//        .target(
-//            name: "Datastore",
-//            dependencies: [
-//                .target(name: "Core")
-//            ],
-//            path: "Datastore/Sources/"
-//        ),
+        .target(
+            name: "Datastore",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "Datastore/Sources/"
+        ),
         .target(
             name: "SecretManager",
             dependencies: [
@@ -120,13 +120,13 @@ let package = Package(
             ],
             path: "Storage/Tests/"
         ),
-//        .testTarget(
-//            name: "DatastoreTests",
-//            dependencies: [
-//                .target(name: "Datastore")
-//            ],
-//            path: "Datastore/Tests/"
-//        ),
+        .testTarget(
+            name: "DatastoreTests",
+            dependencies: [
+                .target(name: "Datastore")
+            ],
+            path: "Datastore/Tests/"
+        ),
         .testTarget(
             name: "TranslationTests",
             dependencies: [

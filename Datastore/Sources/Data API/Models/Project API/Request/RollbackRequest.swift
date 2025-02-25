@@ -1,6 +1,6 @@
 import Core
 
-public struct RollbackRequest: GoogleCloudModel {
+public struct RollbackRequest: Codable {
     
     public init(
         transaction: String,

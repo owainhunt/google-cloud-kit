@@ -16,7 +16,7 @@ public enum GoogleCloudDatastoreError: GoogleCloudError {
 }
 
 /// [Reference](https://cloud.google.com/datastore/docs/concepts/errors)
-public struct CloudDatastoreAPIError: GoogleCloudError, GoogleCloudModel {
+public struct CloudDatastoreAPIError: GoogleCloudError, Codable {
     /// A container for the error information.
     public var error: CloudDatastoreAPIErrorBody
 }

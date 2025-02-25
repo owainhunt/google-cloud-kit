@@ -1,6 +1,6 @@
 import Core
 
-public struct RunAggregationQueryResponse: GoogleCloudModel {
+public struct RunAggregationQueryResponse: Codable {
     /// A batch of query results (always present).
     public let batch: AggregationResultBatch
     /// The parsed form of the GqlQuery from the request, if it was set.

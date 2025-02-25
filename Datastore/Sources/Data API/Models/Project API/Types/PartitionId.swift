@@ -1,7 +1,7 @@
 import Core
 
 /// A partition ID identifies a grouping of entities. The grouping is always by project and namespace, however the namespace ID may be empty.
-public struct PartitionId: GoogleCloudModel {
+public struct PartitionId: Codable {
     
     /// If not empty, the ID of the namespace to which the entities belong.
     public let namespaceId: String?

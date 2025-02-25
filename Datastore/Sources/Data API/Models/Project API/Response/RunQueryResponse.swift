@@ -1,6 +1,6 @@
 import Core
 
-public struct RunQueryResponse: GoogleCloudModel {
+public struct RunQueryResponse: Codable {
     public init(
         batch: QueryResultBatch? = nil,
         query: Query? = nil

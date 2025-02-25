@@ -1,6 +1,6 @@
 import Core
 
-public struct ReserveIdsRequest: GoogleCloudModel {
+public struct ReserveIdsRequest: Codable {
     public init(
         databaseId: String? = nil,
         keys: [Key]

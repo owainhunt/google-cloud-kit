@@ -1,6 +1,6 @@
 import Core
 
-public struct BeginTransactionResponse: GoogleCloudModel {
+public struct BeginTransactionResponse: Codable {
     /// The transaction identifier (always present).
     public let transaction: String
 }

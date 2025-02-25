@@ -1,7 +1,7 @@
 import Core
 
 /// A message that can hold any of the supported value types and associated metadata.
-public struct Value: GoogleCloudModel {
+public struct Value: Codable {
     
     public enum TypedValue {
         case array(ArrayValue)

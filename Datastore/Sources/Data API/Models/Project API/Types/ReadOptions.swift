@@ -1,6 +1,6 @@
 import Core
 
-public struct ReadOptions: GoogleCloudModel {
+public struct ReadOptions: Codable {
     
     public enum TypedReadOptions {
         case readConsistency(ReadConsistency)
@@ -26,7 +26,7 @@ public struct ReadOptions: GoogleCloudModel {
     }
 }
 
-public enum ReadConsistency: String, RawRepresentable, GoogleCloudModel {
+public enum ReadConsistency: String, RawRepresentable, Codable {
     case strong = "STRONG"
     case eventual = "EVENTUAL"
 }
